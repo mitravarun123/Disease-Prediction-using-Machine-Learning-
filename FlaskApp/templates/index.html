@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Disease Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Disease Predictor</h1>
+        <div class="main">
+            <div class="left-box">
+                <form id="predict-form" action="/predict" method="post">
+                    <label for="symptom-input">Enter your symptoms:</label>
+                    <textarea id="symptom-input" name="symptoms" placeholder="e.g. headache, fatigue, nausea">{{ request.form.symptoms or '' }}</textarea>
+
+                    <div class="button-group">
+                        <button type="submit" class="predict-btn">Predict</button>
+                        <button type="button" class="clear-btn" onclick="clearForm()">Clear</button>
+                    </div>
+                </form>
+
+                {% if prediction %}
+<div class="prediction-result" id="prediction-box" style="margin-top: 20px; margin-bottom: 20px;">
+    <strong>Prediction:</strong> <span id="prediction-text">{{ prediction }}</span>
+</div>
+{% endif %}
+
+            </div>
+
+            <div class="right-box">
+                <h2>All Available Symptoms</h2>
+                <div class="symptom-list" id="symptom-list">
+                    {% for symptom in symptoms %}
+                        <div class="symptom-item" onclick="addSymptom('{{ symptom }}')">{{ symptom }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addSymptom(symptom) {
+            const input = document.getElementById('symptom-input');
+            const current = input.value.split(',').map(s => s.trim());
+            if (!current.includes(symptom)) {
+                input.value += input.value ? `, ${symptom}` : symptom;
+            }
+        }
+
+        function clearForm() {
+            document.getElementById('symptom-input').value = '';
+            const predictionBox = document.getElementById('prediction-box');
+            if (predictionBox) predictionBox.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
